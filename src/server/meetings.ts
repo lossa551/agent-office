@@ -583,7 +583,19 @@ export class MeetingRoom {
           ask: this.say('meeting.debate.critique', { previousRound: round - 1, theirNotes: notes(round - 1, all.filter((j) => j !== i)), file: A(note(round, i)) }),
         }));
       }
-      case 'gamestudio':
+      case 'gamestudio': {
+        const team = all.slice(1);
+        if (step > 1) return null;
+        const plan = `${m.notes}/plan.md`;
+        if (round === 1) {
+          const parts = `${team.length} part${team.length === 1 ? '' : 's'}`;
+          return [{ seat: 0, doing: 'planning & aligning with user', file: plan, ask: this.say('meeting.gamestudio.plan', { parts, team: list(team.map((i) => `the ${m.seats[i].role}`)), exampleRole: m.seats[team[0]].role, file: A(plan) }) }];
+        }
+        if (round === 2) {
+          return team.map((i) => ({ seat: i, doing: 'producing with Summer Engine', file: note(2, i), ask: this.say('meeting.gamestudio.part', { plan: A(plan), role: m.seats[i].role, lead: m.seats[0].role, file: A(note(2, i)) }) }));
+        }
+        return [{ seat: 0, doing: 'playtesting & aligning with user', file: m.output, ask: this.say('meeting.gamestudio.merge', { reports: notes(2, team), output: A(m.output) }) }];
+      }
       case 'lead': {
         const team = all.slice(1);
         if (step > 1) return null;
