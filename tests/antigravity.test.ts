@@ -131,6 +131,10 @@ test('ensureAntigravityWorkspace creates .agents/hooks.json, .agents/mcp_config.
     assert.ok(hooksJson['agent-office-bridge']);
     assert.ok(hooksJson['agent-office-bridge'].PreToolUse);
     assert.ok(hooksJson['agent-office-bridge'].Stop);
+    const preToolCmd = hooksJson['agent-office-bridge'].PreToolUse[0].hooks[0].command;
+    if (process.platform === 'win32') {
+      assert.ok(preToolCmd.startsWith('node "'));
+    }
 
     // 2. MCP Config JSON (Summer Engine and Agent Office)
     const mcpConfigPath = path.join(tmp, '.agents', 'mcp_config.json');

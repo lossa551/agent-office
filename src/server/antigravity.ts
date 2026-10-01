@@ -160,7 +160,7 @@ export function antigravityHooksConfig(hookScriptPath: string): Record<string, u
   const nodeBin = process.execPath;
   const cmd = (event: string) =>
     isWin
-      ? `"${nodeBin}" "${hookScriptPath}" ${event}`
+      ? `node "${hookScriptPath}" ${event}`
       : `${shq(nodeBin)} ${shq(hookScriptPath)} ${event}`;
 
   return {
