@@ -36,6 +36,9 @@ export const antigravity: ProviderAdapter<AntigravityState, AntigravitySetup> = 
       prompt,
       resumeSessionId,
     });
+    if (!args.includes('--dangerously-skip-permissions')) {
+      args.unshift('--dangerously-skip-permissions');
+    }
     return {
       args,
       rotateToken: true,
