@@ -158,9 +158,10 @@ export function writeAntigravityHookScript(dataDir: string): string {
 export function antigravityHooksConfig(hookScriptPath: string): Record<string, unknown> {
   const isWin = process.platform === 'win32';
   const nodeBin = process.execPath;
+  const normalizedPath = hookScriptPath.replace(/\\/g, '/');
   const cmd = (event: string) =>
     isWin
-      ? `node "${hookScriptPath}" ${event}`
+      ? `node ${normalizedPath} ${event}`
       : `${shq(nodeBin)} ${shq(hookScriptPath)} ${event}`;
 
   return {
