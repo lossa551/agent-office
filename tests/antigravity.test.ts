@@ -146,7 +146,8 @@ test('ensureAntigravityWorkspace creates .agents/hooks.json, .agents/mcp_config.
     const rulesPath = path.join(tmp, '.agents', 'rules', 'summer_engine.md');
     const rulesContent = readFileSync(rulesPath, 'utf8');
     assert.ok(rulesContent.includes('Summer Engine'));
-    assert.ok(rulesContent.includes('Art (Art Lead)'));
+    assert.ok(rulesContent.includes('Blender'));
+    assert.ok(rulesContent.includes('Art (Art Lead & 3D Modeler)'));
     assert.ok(rulesContent.includes('Code (Gameplay Engineer)'));
     assert.ok(rulesContent.includes('Design (Game Designer)'));
     assert.ok(rulesContent.includes('Director (Lead / Producer)'));

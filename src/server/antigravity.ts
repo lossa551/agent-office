@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type { LifecycleReport } from './workers/lifecycle.js';
 import { shq } from './workers/process.js';
@@ -247,13 +248,19 @@ The **User is the Executive Producer & Creative Director**. The **Director** is 
 - Conducts playtesting with Summer Engine (\`summer_play\`, \`summer_screenshot\`, \`summer_game_input\`) and reviews feel with the User.
 - Assigns clear task breakdowns to Art, Code, and Design.
 
-### 🎨 Art (Art Lead)
+### 🎨 Art (Art Lead & 3D Modeler)
 - Responsible for all visual and audio assets in \`res://assets/\` (\`sprites/\`, \`models/\`, \`audio/\`).
-- Generate 2D pixel art, sprites, tilesets, textures with \`summer_generate_image\`.
-- Slice sprite sheets using \`summer_slice_asset_sheet\`.
-- Generate 3D meshes using \`summer_generate_3d\` / \`summer_fabricate_3d\`.
-- Produce SFX and musical tracks with \`summer_generate_audio\`.
-- When faced with artistic choices (palette, tone, style), document questions and options for the Director to present to the User.
+- **Blender 3D Modeling Pipeline**:
+  - When Blender MCP is active or available, use Blender tools to model, sculpt, texture, and rig 3D assets.
+  - Export completed 3D assets as **glTF / GLB** format (or OBJ) directly into \`res://assets/models/\` with Godot-standard coordinates (+Y up, -Z forward) and origin at the base/pivot.
+  - For animated models/characters, export animations into the \`.glb\` container so Godot and Summer Engine can play them via AnimationPlayer.
+  - Notify the Game Designer when models are ready so they can be placed into scenes with \`summer_add_node\`.
+- **2D & Audio Assets**:
+  - Generate 2D pixel art, sprites, tilesets, textures with \`summer_generate_image\`.
+  - Slice sprite sheets using \`summer_slice_asset_sheet\`.
+  - Generate 3D meshes using \`summer_generate_3d\` / \`summer_fabricate_3d\`.
+  - Produce SFX and musical tracks with \`summer_generate_audio\`.
+- When faced with artistic choices (palette, tone, style, 3D fidelity), document questions and options for the Director to present to the User.
 
 ### 💻 Code (Gameplay Engineer)
 - Responsible for GDScript logic in \`res://scripts/\`.
@@ -265,6 +272,7 @@ The **User is the Executive Producer & Creative Director**. The **Director** is 
 ### 🕹️ Design (Game Designer)
 - Responsible for scene composition in \`res://scenes/\` and gameplay balance.
 - Assemble nodes, collision shapes, tilemaps, lights, and camera framing (\`summer_add_node\`, \`summer_set_prop\`).
+- Instance 3D models exported from Blender into scenes (\`res://assets/models/*.glb\`) with MeshInstance3D and collision shapes.
 - Configure user input mappings (\`summer_input_map_bind\`).
 - Launch runtime sessions (\`summer_play\`), simulate player inputs (\`summer_game_input\`), capture screenshots (\`summer_screenshot\`), and inspect runtime state (\`summer_get_runtime_tree\`).
 - Document balance questions and playability observations for the Director and User.
@@ -291,7 +299,7 @@ export function ensureAntigravityWorkspace(cwd: string, hookScriptPath: string, 
     Object.assign(currentHooks, bridgeConfig);
     writeFileSync(hooksPath, JSON.stringify(currentHooks, null, 2), { mode: 0o600 });
 
-    // 2. MCP configuration (Summer Engine & Office Workers)
+    // 2. MCP configuration (Summer Engine, Blender, Office Workers)
     const mcpConfigPath = path.join(agentsDir, 'mcp_config.json');
     let currentMcp: { mcpServers?: Record<string, unknown> } = {};
     if (existsSync(mcpConfigPath)) {
@@ -310,6 +318,28 @@ export function ensureAntigravityWorkspace(cwd: string, hookScriptPath: string, 
     if (mcpScriptPath) {
       servers['agent-office'] = agentOfficeMcpConfig(mcpScriptPath);
     }
+
+    // Auto-detect Blender MCP from user's global MCP config if present
+    try {
+      const home = os.homedir();
+      const globalConfigs = [
+        path.join(home, '.gemini', 'config', 'mcp_config.json'),
+        path.join(home, '.config', 'antigravity', 'mcp_config.json'),
+      ];
+      for (const gp of globalConfigs) {
+        if (existsSync(gp)) {
+          const gData = JSON.parse(readFileSync(gp, 'utf8'));
+          if (gData?.mcpServers && typeof gData.mcpServers === 'object') {
+            for (const [key, val] of Object.entries(gData.mcpServers)) {
+              if (/blender/i.test(key) && !servers[key]) {
+                servers[key] = val;
+              }
+            }
+          }
+        }
+      }
+    } catch {}
+
     currentMcp.mcpServers = servers;
     writeFileSync(mcpConfigPath, JSON.stringify(currentMcp, null, 2), { mode: 0o600 });
 

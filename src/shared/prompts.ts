@@ -308,7 +308,7 @@ const DEFS = {
     used: 'Round 1 of Game Studio, for the Director.',
     vars: { parts: 'How many parts: "3 parts"', team: 'The rest of the table, by role', exampleRole: "The first teammate's role", file: 'The plan, which the meeting waits for' },
     needs: ['file'],
-    text: "Read the game concept and task. Outline the game vision, core loop, and split the work into {{parts}}, one each for {{team}}. If there are open creative or design trade-offs, ask the user (Executive Producer) using ask_question to align before finalizing. Write the production plan to {{file}}: a section for each discipline headed with their role (like \"## {{exampleRole}}\"), specifying assets, scripts, scenes, and engine tools. Don't make the changes yourself. Then end your turn.",
+    text: "Read the game concept and task. Outline the game vision, core loop, and split the work into {{parts}}, one each for {{team}}. If there are open creative or design trade-offs, ask the user (Executive Producer) using ask_question to align before finalizing. Write the production plan to {{file}}: a section for each discipline headed with their role (like \"## {{exampleRole}}\"), specifying 2D/3D assets (using Blender or Summer Engine), scripts, scenes, and engine tools. Don't make the changes yourself. Then end your turn.",
   },
   'meeting.gamestudio.part': {
     group: 'meetings',
@@ -316,7 +316,7 @@ const DEFS = {
     used: 'Round 2 of Game Studio, for Art Lead, Gameplay Engineer, and Game Designer.',
     vars: { plan: "The Director's plan", role: 'Their role, which heads their section of it', lead: "The Director's role", file: FILE_NOTE },
     needs: ['file'],
-    text: 'Read {{plan}} and implement your discipline\'s part, the section headed "## {{role}}", using Summer Engine tools. Change only the files and assets your role owns, and don\'t commit. If you encounter trade-offs, alternative ideas, or questions for the Director, document them clearly under a "### Questions & Options for User" section in your report. Write what you produced and your questions to {{file}}, then end your turn.',
+    text: 'Read {{plan}} and implement your discipline\'s part, the section headed "## {{role}}", using Summer Engine and Blender tools (exporting 3D models as .glb to res://assets/models/). Change only the files and assets your role owns, and don\'t commit. If you encounter trade-offs, alternative ideas, or questions for the Director, document them clearly under a "### Questions & Options for User" section in your report. Write what you produced and your questions to {{file}}, then end your turn.',
   },
   'meeting.gamestudio.merge': {
     group: 'meetings',
