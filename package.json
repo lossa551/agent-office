@@ -16,6 +16,8 @@
   "scripts": {
     "test": "node --import tsx --import=#tests/css --test tests/*.test.ts",
     "dev": "concurrently -k \"vite\" \"tsx watch src/server/cli.ts --port 4600 --password dev --no-open\"",
+    "studio": "node bin/agent-office.js --agent agy --password studio",
+    "studio:dev": "concurrently -k \"vite\" \"tsx watch src/server/cli.ts --agent agy --port 4600 --password studio --no-open\"",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "tsc -p tsconfig.server.json",
